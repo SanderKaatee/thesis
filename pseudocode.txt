@@ -1,0 +1,5 @@
+Input current BAF graph, current AF Graph, Data Instance DI
+
+Extract all feature-value combinations from DI ('location + color'?
+
+Find  set of nodes in the grounded extension (GE of AF)
