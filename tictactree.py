@@ -9,13 +9,24 @@ from collections import deque
 class BAFUnit:
     def __init__(self):
         self.support_nodes = []    # list of tuples (a, b)
+        self.weights = {}
         self.marked_nodes = []
 
-    def add_support_node(self, a, b):
-        self.support_nodes.append((a, b))
+    def increment_support_node(self, a, b):
+        if (a,b) not in support_nodes:
+            self.support_nodes.append((a, b))
+            self.weights[(a,b)] = 0
+        self.weights[(a,b)] += 1
+        
 
-    def remove_support_node(self, a, b):
-        self.support_nodes.remove((a, b))
+    def reduct_support_node(self, a, b):
+        if (a,b) not in support_nodes:
+            self.support_nodes.append((a, b))
+            self.weights[(a,b)] = 0
+        self.weights[(a,b)] -= 1
+
+    def get_weight(self, a, b):
+        return self.weights[(a,b)]
     
     def add_marked_node(self, a):
         self.marked_nodes.append(a)
@@ -29,52 +40,43 @@ class BAFUnit:
     def support_node_length(self):
         return len(self.support_nodes)
         
-
     def get_observed_actions(self):
         return [node[1] for node in self.support_nodes]
 
-def extract_feature_values(observation, length):
+def extract_feature_values(observation):
     # feature values are [location, color] where 0 = empty, 1 is nought and 2 is cross
     feature_values = []
     for i in range(3):
         for j in range(3):
             feature_values.append([i*3 + j, observation[i,j]])
+    return feature_values
 
-    # create all combinations up to length 'length'
-    combs = []
-    for i in range(1, len(feature_values)+1): 
-        for subset in itertools.combinations(feature_values, i):
-                if i <= length:
-                    combs.append(subset)
-    return combs
-
-def AABL(observation, BAF, length, BRB):
+def AABL(observation, BAF, BRB):
     combs = extract_feature_values(observation, length)
     predicted_behaviour = []
     SN = BAF.support_nodes
     for sn in SN:
         for comb in combs: 
             if sn[0]==comb:
-                predicted_behaviour.append(sn[1])
-    if predicted_behaviour:
-        action = predicted_behaviour[0]
-        # print("didnt make a random action", action)
+                predicted_behaviour.append(sn)
 
-    else:
+    max_weight = 0
+    if predicted_behaviour:
+        for sn in predicted_behaviour:
+            if get_weight(sn) > max_weight:
+                max_weight = get_weight(sn)
+                action = sn[1]
+
+    if action not in locals():
+        #random action if we havent been able to find a good action
         action = random.randint(0,8)
     
-    should_Increment_L = update_BAF(BAF, BRB, combs)
-    while(should_Increment_L):
-        length += 1
-        combs = extract_feature_values(observation, length)
-        should_Increment_L = update_BAF(BAF, BRB, combs)
-        if length > 9:
-            should_Increment_L = False
-    return action, length
+    update_BAF(BAF, BRB, combs)
+
+    return action
 
 def update_BAF(BAF, BRB, combs):
     SN = BAF.support_nodes
-    should_Increment_L = True
 
     for comb in combs:
         add_support = True
@@ -154,7 +156,6 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
 
 BAF = BAFUnit()
 history = deque(maxlen=200)
-length = 1
 i = 0
 
 while(True):
@@ -163,7 +164,7 @@ while(True):
     env.reset()
     state, BRB = generate_game()
     env.load_state(state)
-    action, length = AABL(state, BAF, length, BRB)
+    action = AABL(state, BAF, length, BRB)
     history.append(action == BRB)
     percentage = history.count(True) / len(history) * 100
     # printProgressBar(percentage, 100, prefix = 'Progress:', suffix = 'Correct', length = 50)
