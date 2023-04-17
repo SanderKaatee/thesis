@@ -1,8 +1,8 @@
-import gym
 import itertools 
 import random
 import sys
-from tictactoe_env import tictactoeEnv
+from timeit import default_timer as timer
+
 from collections import deque
 
 
@@ -88,8 +88,8 @@ def update_BAF(BAF, BRB, combs):
     return should_Increment_L
 
 def generate_table():
-    colors = ['red','blue','green','yellow']
-    concepts = ['ball','box','person']
+    colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown', 'gray', 'black', 'white', 'cyan', 'magenta', 'olive', 'navy', 'teal', 'maroon', 'coral', 'gold', 'silver']
+    concepts = ['ball', 'box', 'person', 'car', 'tree', 'book', 'computer', 'phone', 'dog', 'cat']
     combinations = list(itertools.product(colors, concepts))
     combinations.append(('none', 'none'))
 
@@ -114,6 +114,7 @@ def generate_game(table):
 
 # @profile
 def main():
+    start_time = timer()
     length = 1
     table = generate_table()
     BAF = BAFUnit()
@@ -132,6 +133,8 @@ def main():
     print("")
     print("done")
     print("final percentage", percentage)
+    print(f"Total Process Time = {timer() - start_time}")
+
 
 if __name__ == '__main__':
     main()
