@@ -190,8 +190,9 @@ class ScenarioGenerator:
         return str
 
 
-# if __name__ == "__main__":
-#     generator = ScenarioGenerator("second")
-#     for i in range(10):
-#         generator.generate_scenario()
-#         print(generator)
+if __name__ == "__main__":
+    generator = ScenarioGenerator("second")
+    for i in range(10):
+        generator.generate_scenario()
+        print(generator.scenario)
+        print(generator)
