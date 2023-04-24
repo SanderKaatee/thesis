@@ -5,10 +5,10 @@ Created on Thursday Oct 13 2020
 """
 
 
-import scenarios_adjusted as scenarios
-import BAF2_adjusted as BAF2
+import scenarios
+import BAF2
 import BAF
-import myABL
+import pseudocode as myABL
 from sklearn import tree
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "first" #options are "first" and "second"
+    scenario_type = "second" #options are "first" and "second"
 
 
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
 
             start = timer()
-            guess = baf.generate_second_guess(gen.scenario, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches)
+            guess = baf.generate_second_guess(gen.scenario, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches, show_rule=True)
             baf.update_baf(gen.scenario, gen.best_recovery_behavior, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches)
             if gen.best_recovery_behavior == guess:
                 TP += 1
@@ -79,7 +79,8 @@ if __name__ == "__main__":
 
 
             saved_scenarios_in_memory_for_other_approaches.append(gen.scenario_to_numerical())
-            saved_best_recovery_behaviors_in_memory_for_other_approaches.append(gen.best_recovery_behavior)
+            saved_best_recovery_behaviors_in_memory_for_other_approaches.append(gen.recovery_behavior_to_numerical())
+            
  
             print(f"{attempt}:AABL: {TP}, Original: {TP_Orig}, EABL: {TP_my}")
             print("best recovery was", gen.best_recovery_behavior)

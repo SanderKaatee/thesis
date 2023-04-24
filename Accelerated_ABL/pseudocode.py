@@ -75,7 +75,7 @@ class BAFUnit:
           
         
         should_Increment_L = self.update_BAF(BRB, combs)
-        while(should_Increment_L and length <= 2):
+        while(should_Increment_L and self.length <= 2):
             self.length += 1
             combs = self.extract_feature_values(observation)
             should_Increment_L = self.update_BAF(BRB, combs)
