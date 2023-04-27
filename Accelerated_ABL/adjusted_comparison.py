@@ -7,7 +7,7 @@ Created on Thursday Oct 13 2020
 
 import scenarios_original as scenarios
 import BAF2_original as BAF2
-import BAF2_adjusted as myABL
+import BAF2_pseudocode as myABL
 import tabular
 from sklearn import tree
 import numpy as np
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     for itr in range(number_of_iterations):
         gen = scenarios.ScenarioGenerator(scenario_type)
         baf = BAF2.BAF2(gen.scenario, gen)
-        myBAF = myABL.BAF2(gen.scenario, gen)
+        myBAF = myABL.BAF2(gen.scenario)
         locations = list(range(0, gen.number_of_locations))
         colors = list(gen.colors.values())
         colors.append("Noc")
@@ -43,6 +43,9 @@ if __name__ == "__main__":
         saved_scenarios_in_memory_for_other_approaches = []
         saved_best_recovery_behaviors_in_memory_for_other_approaches = []
         saved_best_recovery_behaviors_in_memory = []
+
+        all_scenarios = []
+        all_recoveries = []
         TP = 0
         TP_Orig = 0
         TP_my = 0
@@ -82,7 +85,9 @@ if __name__ == "__main__":
 
 
             start = timer()
-            guess = myBAF.guess(saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
+            all_scenarios.append(gen.scenario_to_numerical())
+            all_recoveries.append(gen.best_recovery_behavior)
+            guess = myBAF.guess(gen.scenario_to_numerical(), saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
             myBAF.update_baf(gen.best_recovery_behavior, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
             if gen.best_recovery_behavior == guess:
                 TP_my += 1
