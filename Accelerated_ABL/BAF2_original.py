@@ -100,16 +100,35 @@ class BAF2:
         should_change = True
         numerical_scenario = np.array(self.gen[0].scenario_to_numerical())
         # self.combination_feature_weights = {}
+        # essentially this is a hack to quickly see which location is important and which isnt
         if len(all_scenarios_so_far) > 0:
             self.init_phase = False
             for idx, subset in enumerate(self.subsets):
+                # For every subset (functionally a object in the scenario),
+                # look at the location at ALL previously seen scenarios and
+                # the corresponding CORRECT recovery behavior associated with that scenario.
+                # Take all unique occurences with recovery, 
+                # e.g. object in location + recovery behavior that have only been seen once
+                # As well as without recovery
+                # e.g. object in location that has only been seen once
                 numbers = self.arg_to_combination_numbers(subset)
                 selected_columns_with_recovery = np.zeros((len(all_scenarios_so_far), len(numbers) + 1))
                 selected_columns_with_recovery[:, np.arange(len(numbers))] = np.array(all_scenarios_so_far)[:, numbers]
                 selected_columns_with_recovery[:, -1] = corresponding_recoveries_for_scenarios_so_far
                 unique_selected_columns_with_recovery = np.unique(selected_columns_with_recovery, axis=0)
+
+                # Count the amount of non-unique object-recovery occurences for this location
                 positive = len(selected_columns_with_recovery) - len(unique_selected_columns_with_recovery)
+                # which is absolutely irrelevant to the algorithm so you can put it to 0 if you want
+
+
+
                 unique_selected_columns_without_recovery = np.unique(selected_columns_with_recovery[:, :-1], axis=0)
+
+                # Count the amount of times this location appears in combination with a different recovery
+                # essentially determening the relevancy of this location:
+                # if the location is relevant then the recovery will always be the same and thus will negative = 0
+                # otherwise negative will be positive
                 negative = len(unique_selected_columns_with_recovery) - len(unique_selected_columns_without_recovery)
 
                 # current_scnerio_selected_columns = numerical_scenario[numbers].astype('float64')

@@ -5,13 +5,10 @@ import sys
 from collections import deque
 from collections import Counter
 
-from memory_profiler import profile
 
-
-@profile
 class BAFUnit:
     def __init__(self):
-        self.support_nodes = []    # list of tuples (a, b)
+        self.support_nodes = []     # list of tuples (a, b)
         self.marked_nodes = []
         self.length = 1
         self.previous_best_recoveries = []
@@ -40,19 +37,29 @@ class BAFUnit:
     def extract_feature_values(self, observation):
         feature_values = []
         for i, obs in enumerate(observation):
-                feature_values.append((i, obs))
+                feature_values.append(obs[0])
+                feature_values.append(obs[1])
         
         combs = feature_values
         # create all combinations up to length 'length'
         combs = []
         for i in range(1, len(feature_values)+1): 
             for subset in itertools.combinations(feature_values, i):
+                    print(subset)
                     if i == self.length:
                         combs.append(subset)
+                        print(subset)
+                        # input("waiting...")
         return combs
 
     def AABL(self, observation, BRB):
+        if len(observation) == 6:
+            observation = observation[0]
+        else:
+            observation = [observation[0], observation[1]]
+
         self.previous_best_recoveries.append(BRB)
+        
         combs = self.extract_feature_values(observation)
         predicted_behaviour = []
         SN = self.support_nodes
@@ -61,17 +68,18 @@ class BAFUnit:
                 if sn[0]==comb:
                     predicted_behaviour.append(sn[1])
         if predicted_behaviour:
-            action = predicted_behaviour[0]
+            if len(predicted_behaviour) == 1:
+                action = predicted_behaviour[0]
+            else:
+                action = random.choice(predicted_behaviour)
         elif not self.previous_best_recoveries:
             counter = Counter(self.previous_best_recoveries)
             action = counter.most_common()
-
         else:
-            action = random.choice(['push','ask','alt','continue'])  
+            action = ''
           
-        
         should_Increment_L = self.update_BAF(BRB, combs)
-        while(should_Increment_L):
+        while(should_Increment_L and self.length <= 2):
             self.length += 1
             combs = self.extract_feature_values(observation)
             should_Increment_L = self.update_BAF(BRB, combs)
@@ -79,9 +87,9 @@ class BAFUnit:
         return action
 
     def update_BAF(self, BRB, combs):
+        # updating support relations
         SN = self.support_nodes
         should_Increment_L = True
-
         for comb in combs:
             add_support = True
             for sn in SN:

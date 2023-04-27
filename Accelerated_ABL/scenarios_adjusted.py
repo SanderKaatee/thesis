@@ -66,6 +66,8 @@ class ScenarioGenerator:
         numerical = []
         for sen in self.scenario:
             if sen[0] != "Noc":
+                # change the values to keys for concepts and colors
+                # add everything to a list
                 numerical.append(list(self.colors.keys())[list(self.colors.values()).index(sen[0])])
                 numerical.append(list(self.concepts.keys())[list(self.concepts.values()).index(sen[1])])
             else:

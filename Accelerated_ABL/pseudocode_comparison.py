@@ -5,10 +5,10 @@ Created on Thursday Oct 13 2020
 """
 
 
-import scenarios
-import BAF2
+import scenarios_original as scenarios
+import BAF2_original as BAF2
 import BAF
-import pseudocode as myABL
+import pseudocode_reformed as myABL
 from sklearn import tree
 import numpy as np
 import matplotlib.pyplot as plt

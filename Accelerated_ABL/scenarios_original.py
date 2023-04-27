@@ -192,7 +192,9 @@ class ScenarioGenerator:
 
 if __name__ == "__main__":
     generator = ScenarioGenerator("second")
-    for i in range(10):
+    for i in range(1):
         generator.generate_scenario()
         print(generator.scenario)
         print(generator)
+        print(len(generator.rule_set))
+        print(generator.rule_set)
