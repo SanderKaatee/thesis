@@ -18,7 +18,7 @@ from timeit import default_timer as timer
 
 if __name__ == "__main__":
     number_of_attempts = 200
-    number_of_iterations = 10
+    number_of_iterations = 100
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
         fig, ax = plt.subplots(nrows=1, ncols=1)
         ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="AABL")
-        ax.plot(range(number_of_attempts), np.mean(all_TPs_my[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), ':', label="Adjusted")
+        ax.plot(range(number_of_attempts), np.mean(all_TPs_my[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), ':', label="Refactored")
         ax.set_xlabel("Number of Attempts")
         ax.set_ylabel("Accuracy")
         ax.legend()
