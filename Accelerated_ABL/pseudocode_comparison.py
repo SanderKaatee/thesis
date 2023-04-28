@@ -22,7 +22,10 @@ if __name__ == "__main__":
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "second" #options are "first" and "second"
+    scenario_type = "first" #options are "first" and "second"
+
+    pseudocode_correct = []
+    AABL_correct = []
 
 
 
@@ -85,6 +88,10 @@ if __name__ == "__main__":
             print(f"{attempt}:AABL: {TP}, Original: {TP_Orig}, EABL: {TP_my}")
             print("best recovery was", gen.best_recovery_behavior)
             # input("Press any key...")
+            pseudocode_correct.append(TP_my)
+            pseudocode_incorrect.append(200-TP_my)
+            AABL_incorrect.append(200-TP)
+
 
 
 
@@ -98,6 +105,16 @@ if __name__ == "__main__":
         fig.savefig(f"plots/fig_{itr}.png", bbox_inches='tight')
         if itr != number_of_iterations - 1: #only the final plot will be shown (all the plots has been saved)
             plt.close(fig)
+
+    data = pd.DataFrame({
+        'iteration': range(1, number_of_iterations + 1),
+        'AABL_correct': AABL_correct,
+        'AABL_incorrect': AABL_incorrect,
+        'pseudocode_correct': pseudocode_correct,
+        'pseudocode_incorrect': pseudocode_incorrect
+    })
+    data.to_csv('pseudocode_result_' + scenario_type + '.csv', index=False)
+
     end_time = time.process_time()
     print(f"Total Process Time = {end_time - start_time}")
     print("AABL time", AABL_time)

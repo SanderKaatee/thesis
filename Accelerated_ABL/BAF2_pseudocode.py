@@ -4,7 +4,7 @@ class BAF2:
     def __init__(self, scenario):
         self.possible_location_combinations = []
         self.recovery_behaviors = []
-        self.num_features_to_consider = 1
+        self.num_features_to_consider = 2
         self.num_of_locations = len(scenario)
         self.important_locations = np.arange(self.num_of_locations)
 
