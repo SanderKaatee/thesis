@@ -4,19 +4,21 @@ Created on Thursday Oct 13 2020
 َAll rights reserved 2020
 """
 
-
+import sys
 import scenarios_original as scenarios
 import BAF2_original as BAF2
 import BAF2_pseudocode as myABL
 import tabular
 from sklearn import tree
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import time
 import random
 from timeit import default_timer as timer
 
-if __name__ == "__main__":
+
+def main():
     number_of_attempts = 200
     number_of_iterations = 100
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
@@ -24,6 +26,14 @@ if __name__ == "__main__":
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_tabular = np.zeros((number_of_iterations, number_of_attempts))
     scenario_type = "first" #options are "first" and "second"
+
+    refactored_correct = []
+    refactored_incorrect = []
+    AABL_correct = []
+    AABL_incorrect = []
+    My_time = 0
+    AABL_time = 0
+
 
 
 
@@ -52,9 +62,7 @@ if __name__ == "__main__":
         TP_tabular = 0
         DT_TP = 0
 
-        AABL_time = 0
         Orig_time = 0
-        My_time = 0
         Tabular_time = 0
         feature_indices = []
         for attempt in range(number_of_attempts):
@@ -105,6 +113,10 @@ if __name__ == "__main__":
             print(f"{attempt}:AABL: {TP}, Adjusted: {TP_my}")
             print("best recovery was", gen.best_recovery_behavior)
             # input("Press any key...")
+            refactored_correct.append(TP_my)
+            refactored_incorrect.append(200-TP_my)
+            AABL_correct.append(TP)
+            AABL_incorrect.append(200-TP)
 
 
 
@@ -120,5 +132,19 @@ if __name__ == "__main__":
     end_time = time.process_time()
     print(f"Total Process Time = {end_time - start_time}")
     print("AABL time", AABL_time)
-    print("Adjusted time", My_time)
+    print("Refactored time", My_time)
+    print("AABL memory", sys.getsizeof(baf))
+    print("Refactored memory", sys.getsizeof(myBAF))
+    
+
+    data = pd.DataFrame({
+        'AABL_correct': AABL_correct,
+        'AABL_incorrect': AABL_incorrect,
+        'refactored_correct': refactored_correct,
+        'refactored_incorrect': refactored_incorrect
+    })
+    data.to_csv('refactored_result_' + scenario_type + '.csv', index=False)
     plt.show()
+
+if __name__ == "__main__":
+    main()

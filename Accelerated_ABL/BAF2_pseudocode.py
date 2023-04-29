@@ -4,7 +4,7 @@ class BAF2:
     def __init__(self, scenario):
         self.possible_location_combinations = []
         self.recovery_behaviors = []
-        self.num_features_to_consider = 2
+        self.num_features_to_consider = 1
         self.num_of_locations = len(scenario)
         self.important_locations = np.arange(self.num_of_locations)
 
@@ -22,9 +22,9 @@ class BAF2:
                     unique_selected_locations_with_recovery = np.unique(selected_locations_with_recovery, axis=0)
                     unique_selected_locations_without_recovery = np.unique(selected_locations_with_recovery[:, :-1], axis=0)
 
-                    # Count the amount of times this location appears in combination with a different recovery
+                    # Count the amount of times the object in this location appears in combination with a different recovery
                     # essentially determening the relevancy of this location:
-                    # if the location is relevant then the recovery will always be the same and thus will negative = 0
+                    # if the location is relevant then the recovery will always be the same for the same object and thus will negative = 0
                     # otherwise negative will be positive
                     negative = len(unique_selected_locations_with_recovery) - len(unique_selected_locations_without_recovery)
 

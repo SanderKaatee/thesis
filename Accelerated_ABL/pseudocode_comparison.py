@@ -8,9 +8,10 @@ Created on Thursday Oct 13 2020
 import scenarios_original as scenarios
 import BAF2_original as BAF2
 import BAF
-import pseudocode_reformed as myABL
+import pseudocode as myABL
 from sklearn import tree
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import time
 import random
@@ -22,10 +23,12 @@ if __name__ == "__main__":
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "first" #options are "first" and "second"
+    scenario_type = "third" #options are "first" and "second"
 
     pseudocode_correct = []
+    pseudocode_incorrect = []
     AABL_correct = []
+    AABL_incorrect = []
 
 
 
@@ -88,9 +91,10 @@ if __name__ == "__main__":
             print(f"{attempt}:AABL: {TP}, Original: {TP_Orig}, EABL: {TP_my}")
             print("best recovery was", gen.best_recovery_behavior)
             # input("Press any key...")
-            pseudocode_correct.append(TP_my)
-            pseudocode_incorrect.append(200-TP_my)
-            AABL_incorrect.append(200-TP)
+        pseudocode_correct.append(TP_my)
+        pseudocode_incorrect.append(200-TP_my)
+        AABL_correct.append(TP)
+        AABL_incorrect.append(200-TP)
 
 
 
