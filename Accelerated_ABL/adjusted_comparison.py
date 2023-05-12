@@ -20,12 +20,12 @@ from timeit import default_timer as timer
 
 def main():
     number_of_attempts = 200
-    number_of_iterations = 100
+    number_of_iterations = 10
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_tabular = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "first" #options are "first" and "second"
+    scenario_type = "second" #options are "first" and "second"
 
     refactored_correct = []
     refactored_incorrect = []

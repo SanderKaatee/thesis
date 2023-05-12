@@ -1,21 +1,26 @@
 import numpy as np
+import itertools
 
 class BAF2:
     def __init__(self, scenario):
         self.possible_location_combinations = []
         self.recovery_behaviors = []
         self.num_features_to_consider = 1
-        self.num_of_locations = len(scenario)
-        self.important_locations = np.arange(self.num_of_locations)
+        self.num_of_locations = len(scenario) * 2
+        important_locations = np.arange(self.num_of_locations)
+        combinations = list(itertools.combinations(important_locations, self.num_features_to_consider))
+        self.combinations_as_lists = [list(comb) for comb in combinations] 
 
     def determine_relevant_locations(self, all_scenarios_so_far,
                                             corresponding_recoveries_for_scenarios_so_far):
-        should_change = False
         if len(all_scenarios_so_far) > 0:
-            if(len(self.important_locations) > 0):
-                for idx in self.important_locations:
-
-                    numbers = [idx + i for i in range(self.num_features_to_consider)]
+            if(len(self.combinations_as_lists) > 0):
+                print(len(self.combinations_as_lists))
+                input("len. combinations")
+                copy_of_combinations_as_list =  self.combinations_as_lists[:]
+                for numbers in copy_of_combinations_as_list:
+                    # print(numbers)
+                    # input("waiting...")
                     selected_locations_with_recovery = np.zeros((len(all_scenarios_so_far), len(numbers) + 1), dtype='int')
                     selected_locations_with_recovery[:, np.arange(len(numbers))] = np.array(all_scenarios_so_far)[:, numbers]
                     selected_locations_with_recovery[:, -1] = [self.recovery_behaviors.index(recovery_behavior) for recovery_behavior in corresponding_recoveries_for_scenarios_so_far]
@@ -30,24 +35,24 @@ class BAF2:
 
                     # only keep track of relevant locations
                     if negative <= 0:
-                        should_change = False
                         if numbers not in self.possible_location_combinations:
                             self.possible_location_combinations.append(numbers)
                     else:
-                        mask = self.important_locations != idx
-                        self.important_locations = self.important_locations[mask]
+                        self.combinations_as_lists.remove(numbers)
                         if numbers in self.possible_location_combinations:
                             self.possible_location_combinations.remove(numbers)
             else:
-                should_change = True
-                self.important_locations = np.arange(self.num_of_locations)
-        return should_change
+                self.num_features_to_consider += 1
+                important_locations = np.arange(self.num_of_locations)
+                combinations = list(itertools.combinations(important_locations, self.num_features_to_consider))
+                self.combinations_as_lists = [list(comb) for comb in combinations] 
+        return
 
     def update_baf(self, best_recovery_behavior, all_scenarios_so_far,
                    corresponding_recoveries_for_scenarios_so_far):
         self.add_recovery_behavior(best_recovery_behavior)
-        if self.determine_relevant_locations(all_scenarios_so_far, corresponding_recoveries_for_scenarios_so_far):
-            self.num_features_to_consider += 1
+        self.determine_relevant_locations(all_scenarios_so_far, corresponding_recoveries_for_scenarios_so_far)
+
 
     def add_recovery_behavior(self, brb):
         if brb not in self.recovery_behaviors:

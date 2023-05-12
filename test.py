@@ -1,11 +1,7 @@
-support_nodes = []    # list of tuples (a, b)
-weights = {}
-a = 1
-b = 2
-
-support_nodes.append((a, b))
-weights[(a,b)] = 0
-for i in range(10):
-    weights[(a,b)] += 1
-
-print(weights[(a,b)])
+    def recur_subset(self, s):
+        self.subsets = []
+        l = self.num_features_to_consider:
+            for x in itertools.combinations(s, l):
+                numbers = self.arg_to_combination_numbers(x)
+                if self.init_phase or (str(numbers) in self.combination_feature_weights):
+                        self.subsets.append(list(x))

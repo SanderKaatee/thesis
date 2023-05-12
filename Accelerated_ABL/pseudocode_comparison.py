@@ -23,7 +23,7 @@ if __name__ == "__main__":
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "third" #options are "first" and "second"
+    scenario_type = "first" #options are "first" and "second"
 
     pseudocode_correct = []
     pseudocode_incorrect = []
