@@ -13,10 +13,10 @@ class ScenarioGenerator:
     number_of_colors = 4
     number_of_concepts = 3
     number_of_recovery_behaviors = 4
-    colors = {0: 'red', 1: 'green', 2: 'blue', 3: 'yellow'}
-    concepts = {0: 'ball', 1: 'box', 2: 'person'}
-    recovery_behaviors = {0: 'push', 1: 'ask', 2: 'alt', 3: 'continue'}
-    each_recovery_behavior_occurance = {'push': 0, 'ask': 0, 'alt': 0, 'continue': 0}
+    colors = {0: 'purple', 1: 'violet', 2: 'pink', 3: 'white'}
+    concepts = {0: 'stone', 1: 'block', 2: 'dog'}
+    recovery_behaviors = {0: 'shove', 1: 'prod', 2: 'wait', 3: 'climb'}
+    each_recovery_behavior_occurance = {'shove': 0, 'prod': 0, 'wait': 0, 'climb': 0}
     best_recovery_behavior = ""
     rule_set = []
     scenario = []
@@ -55,7 +55,7 @@ class ScenarioGenerator:
         locations = self.rand_zero_one_vector(n)
         for loc in locations:
             if loc == 0:
-                scenario.append(["Noc", "Noc"])
+                scenario.append(["Empty", "Empty"])
             else:
                 col_con = self.random_combination_of_color_concept()
                 scenario.append(col_con)
@@ -65,7 +65,7 @@ class ScenarioGenerator:
     def scenario_to_numerical(self):
         numerical = []
         for sen in self.scenario:
-            if sen[0] != "Noc":
+            if sen[0] != "Empty":
                 numerical.append(list(self.colors.keys())[list(self.colors.values()).index(sen[0])])
                 numerical.append(list(self.concepts.keys())[list(self.concepts.values()).index(sen[1])])
             else:
@@ -107,13 +107,13 @@ class ScenarioGenerator:
 
     def generate_new_rule_set(self):
         if self.scenario_type == "first":
-            rules = {"Noc-Noc": "continue"}
+            rules = {"Empty-Empty": "climb"}
             for _, color in self.colors.items():
                 for _, concept in self.concepts.items():
                     recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors -1)
                     rules[f"{color}-{concept}"] = self.recovery_behaviors[recovery_behavior_index]
         elif self.scenario_type == "second":
-            rules = {"Noc-Noc,Noc-Noc": "continue"}
+            rules = {"Empty-Empty,Empty-Empty": "climb"}
             for _, color1 in self.colors.items():
                 for _, concept1 in self.concepts.items():
                     for _, color2 in self.colors.items():
@@ -124,11 +124,11 @@ class ScenarioGenerator:
             for _, color in self.colors.items():
                 for _, concept in self.concepts.items():
                     recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                    rules[f"Noc-Noc,{color}-{concept}"] = self.recovery_behaviors[recovery_behavior_index]
+                    rules[f"Empty-Empty,{color}-{concept}"] = self.recovery_behaviors[recovery_behavior_index]
                     recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                    rules[f"{color}-{concept},Noc-Noc"] = self.recovery_behaviors[recovery_behavior_index]
+                    rules[f"{color}-{concept},Empty-Empty"] = self.recovery_behaviors[recovery_behavior_index]
         elif self.scenario_type == "third":
-            rules = {"Noc-Noc,Noc-Noc": "continue"}
+            rules = {"Empty-Empty,Empty-Empty": "climb"}
             for _, color1 in self.colors.items():
                 for _, concept1 in self.concepts.items():
                     for _, color2 in self.colors.items():
@@ -139,11 +139,11 @@ class ScenarioGenerator:
             for _, color in self.colors.items():
                 for _, concept in self.concepts.items():
                     recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                    rules[f"Noc-Noc,{color}-{concept}"] = self.recovery_behaviors[recovery_behavior_index]
+                    rules[f"Empty-Empty,{color}-{concept}"] = self.recovery_behaviors[recovery_behavior_index]
                     recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                    rules[f"{color}-{concept},Noc-Noc"] = self.recovery_behaviors[recovery_behavior_index]
+                    rules[f"{color}-{concept},Empty-Empty"] = self.recovery_behaviors[recovery_behavior_index]
         elif self.scenario_type == "fourth":
-            rules = {"Noc-Noc,Noc-Noc,Noc-Noc": "continue"}
+            rules = {"Empty-Empty,Empty-Empty,Empty-Empty": "climb"}
             for _, color1 in self.colors.items():
                 for _, concept1 in self.concepts.items():
                     for _, color2 in self.colors.items():
@@ -158,22 +158,22 @@ class ScenarioGenerator:
                     for _, color2 in self.colors.items():
                         for _, concept2 in self.concepts.items():
                             recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                            rules[f"Noc-Noc,{color}-{concept},{color2}-{concept2}"] = self.recovery_behaviors[
+                            rules[f"Empty-Empty,{color}-{concept},{color2}-{concept2}"] = self.recovery_behaviors[
                                 recovery_behavior_index]
                             recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                            rules[f"{color}-{concept},Noc-Noc,{color2}-{concept2}"] = self.recovery_behaviors[
+                            rules[f"{color}-{concept},Empty-Empty,{color2}-{concept2}"] = self.recovery_behaviors[
                                 recovery_behavior_index]
                             recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                            rules[f"{color}-{concept},{color2}-{concept2},Noc-Noc"] = self.recovery_behaviors[
+                            rules[f"{color}-{concept},{color2}-{concept2},Empty-Empty"] = self.recovery_behaviors[
                                 recovery_behavior_index]
                             recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                            rules[f"Noc-Noc,{color}-{concept},Noc-Noc"] = self.recovery_behaviors[
+                            rules[f"Empty-Empty,{color}-{concept},Empty-Empty"] = self.recovery_behaviors[
                                 recovery_behavior_index]
                             recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                            rules[f"Noc-Noc,Noc-Noc,{color2}-{concept2}"] = self.recovery_behaviors[
+                            rules[f"Empty-Empty,Empty-Empty,{color2}-{concept2}"] = self.recovery_behaviors[
                                 recovery_behavior_index]
                             recovery_behavior_index = np.random.randint(self.number_of_recovery_behaviors - 1)
-                            rules[f"{color}-{concept},Noc-Noc,Noc-Noc"] = self.recovery_behaviors[
+                            rules[f"{color}-{concept},Empty-Empty,Empty-Empty"] = self.recovery_behaviors[
                                 recovery_behavior_index]
         self.rule_set = rules
 
@@ -192,9 +192,6 @@ class ScenarioGenerator:
 
 if __name__ == "__main__":
     generator = ScenarioGenerator("second")
-    for i in range(1):
+    for i in range(10):
         generator.generate_scenario()
-        print(generator.scenario)
         print(generator)
-        print(len(generator.rule_set))
-        print(generator.rule_set)

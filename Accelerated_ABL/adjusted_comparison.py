@@ -20,12 +20,12 @@ from timeit import default_timer as timer
 
 def main():
     number_of_attempts = 200
-    number_of_iterations = 10
+    number_of_iterations = 100
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_tabular = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "second" #options are "first" and "second"
+    scenario_type = "first" #options are "first" and "second"
 
     refactored_correct = []
     refactored_incorrect = []
@@ -108,7 +108,6 @@ def main():
             saved_best_recovery_behaviors_in_memory_for_other_approaches.append(gen.recovery_behavior_to_numerical())
 
             saved_best_recovery_behaviors_in_memory.append(gen.best_recovery_behavior)
-            
  
             print(f"{attempt}:AABL: {TP}, Adjusted: {TP_my}")
             print("best recovery was", gen.best_recovery_behavior)

@@ -83,8 +83,6 @@ class BAFUnit:
         return action
 
     def update_BAF(self, BRB, combs):
-
-
         # updating the attack relations and class labels
         if BRB not in self.get_observed_actions():
             RNs = [recovery[1] for recovery in self.attacks]

@@ -38,7 +38,6 @@ class BAF2:
         #     self.combination_feature_weights[str(itr)] = 1
 
     def recur_subset(self, s, l=None):
-
         if l is None:
             l = len(s)
             self.subsets = []
@@ -75,7 +74,7 @@ class BAF2:
                 lst.append(arg[0] * 2)
                 lst.append(arg[0] * 2 + 1)
             elif len(arg) == 2:
-                if arg[1] in ['red', 'green', 'blue', 'yellow', 'Noc']:
+                if arg[1] in ['red', 'green', 'blue', 'yellow']:
                     lst.append(arg[0] * 2)
                 else:
                     lst.append(arg[0] * 2 + 1)
@@ -84,8 +83,11 @@ class BAF2:
     def enumeratea_scenarios(self, scenario):
         enumerated_scenarios = []
         for idx in range(len(scenario)):
-            enumerated_scenarios.append([idx, scenario[idx][0]])
-            enumerated_scenarios.append([idx, scenario[idx][1]])
+            if scenario[idx][0] != 'Noc':
+                enumerated_scenarios.append([idx, scenario[idx][0]])
+                enumerated_scenarios.append([idx, scenario[idx][1]])
+            else:
+                enumerated_scenarios.append([idx, scenario[idx][0], scenario[idx][1]])
         return enumerated_scenarios
 
     def remove_others(self, idx):
@@ -98,38 +100,16 @@ class BAF2:
         should_change = True
         numerical_scenario = np.array(self.gen[0].scenario_to_numerical())
         # self.combination_feature_weights = {}
-        # essentially this is a hack to quickly see which location is important and which isnt
         if len(all_scenarios_so_far) > 0:
             self.init_phase = False
-            print("len(self.subsets)")
-            print(len(self.subsets))
-            print(self.subsets)
-            print("number of features to consider")
-            print(self.num_features_to_consider)
             for idx, subset in enumerate(self.subsets):
-                # For every subset (functionally a object in the scenario),
-                # look at the location at ALL previously seen scenarios and
-                # the corresponding CORRECT recovery behavior associated with that scenario.
-                # Take all unique occurences with recovery, 
-                # e.g. object in location + recovery behavior that have only been seen once
-                # As well as without recovery
-                # e.g. object in location that has only been seen once
                 numbers = self.arg_to_combination_numbers(subset)
                 selected_columns_with_recovery = np.zeros((len(all_scenarios_so_far), len(numbers) + 1))
                 selected_columns_with_recovery[:, np.arange(len(numbers))] = np.array(all_scenarios_so_far)[:, numbers]
                 selected_columns_with_recovery[:, -1] = corresponding_recoveries_for_scenarios_so_far
                 unique_selected_columns_with_recovery = np.unique(selected_columns_with_recovery, axis=0)
-
-                # Count the amount of non-unique object-recovery occurences for this location
                 positive = len(selected_columns_with_recovery) - len(unique_selected_columns_with_recovery)
-                # which is absolutely irrelevant to the algorithm so you can put it to 0 if you want
-
                 unique_selected_columns_without_recovery = np.unique(selected_columns_with_recovery[:, :-1], axis=0)
-
-                # Count the amount of times this location appears in combination with a different recovery
-                # essentially determening the relevancy of this location:
-                # if the location is relevant then the recovery will always be the same and thus will negative = 0
-                # otherwise negative will be positive
                 negative = len(unique_selected_columns_with_recovery) - len(unique_selected_columns_without_recovery)
 
                 # current_scnerio_selected_columns = numerical_scenario[numbers].astype('float64')
@@ -141,7 +121,6 @@ class BAF2:
                     # self.remove_others(idx)
                     # return should_change
                 else:
-                    input("deze dan?")
                     self.combination_feature_weights.pop(str(numbers), None)
         else:
             should_change = False
@@ -187,6 +166,9 @@ class BAF2:
                                                           previous_best_recoveries):
         if self.combination_feature_weights == {}:
             return ''
+
+        return self.gen[0].numerical_to_recovery_behavior(self.most_common(previous_best_recoveries))
+
         sum_of_weights = {}
         max_support_for_recovery_behavior = {}
         self.sum_of_weights_for_each_recovery_behavior = sum_of_weights
@@ -200,6 +182,7 @@ class BAF2:
         max_indices_list = list(map(int, max_indices_list))
         current_scenarios_columns = list(np.array(self.gen[0].scenario_to_numerical())[max_indices_list])
         recovery_behavior_weights = {}
+
         for recovery_behavior in self.recovery_behaviors:
             recovery_behavior_weights[recovery_behavior] = 0
         for recovery_behavior in self.recovery_behaviors:
@@ -236,6 +219,6 @@ class BAF2:
 
     def generate_second_guess(self, scenario, previous_scenarios, previous_best_recoveries, show_rule=True):
         enumerated_scenarios = self.enumeratea_scenarios(scenario)
-        # self.recur_subset(enumerated_scenarios)
+        self.recur_subset(enumerated_scenarios)
         return self.compute_sum_of_weights_for_each_recovery_behavior(show_rule, enumerated_scenarios, previous_scenarios,
                                                                       previous_best_recoveries)

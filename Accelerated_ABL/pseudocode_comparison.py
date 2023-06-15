@@ -5,7 +5,7 @@ Created on Thursday Oct 13 2020
 """
 
 
-import scenarios_original as scenarios
+import scenario_2b as scenarios
 import BAF2_original as BAF2
 import BAF
 import pseudocode as myABL
@@ -18,8 +18,8 @@ import random
 from timeit import default_timer as timer
 
 if __name__ == "__main__":
-    number_of_attempts = 200
-    number_of_iterations = 10
+    number_of_attempts = 500
+    number_of_iterations = 5
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
