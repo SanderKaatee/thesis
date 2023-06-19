@@ -14,6 +14,9 @@ class ScenarioGenerator:
         self.best_recovery_behavior = ""
         self.ruleset = self.generate_ruleset()
 
+        self.generate_scenario()
+
+
     def generate_ruleset(self):
         ruleset = {}
         rb_copy = list(self.recovery_behaviors.values())

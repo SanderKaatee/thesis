@@ -7,7 +7,7 @@ Created on Thursday Oct 13 2020
 
 import scenarios as scenarios
 import BAF2 as BAF2
-import BAF2_Refactored as myABL
+import pseudocode as myABL
 
 import numpy as np
 import pandas as pd
@@ -34,16 +34,16 @@ def main():
     else:
         scenario_type = "first" #options are "first" and "second"
 
-    refactored_correct = []
+    pseudocode_correct = []
     AABL_correct = []
-    runtimes = {'AABL': 0, 'RABL': 0}
+    runtimes = {'AABL': 0, 'pseudocode': 0}
 
 
     start_time = time.process_time()
     for itr in range(number_of_iterations):
         gen = scenarios.ScenarioGenerator(scenario_type)
         baf = BAF2.BAF2(gen.scenario, gen)
-        myBAF = myABL.BAF2(gen.scenario)
+        myBAF = myABL.BAFUnit()
 
         saved_scenarios_in_memory_for_other_approaches = []
         saved_best_recovery_behaviors_in_memory_for_other_approaches = []
@@ -68,14 +68,11 @@ def main():
 
 
             start = timer()
-            all_scenarios.append(gen.scenario_to_numerical())
-            all_recoveries.append(gen.best_recovery_behavior)
-            guess = myBAF.guess(gen.scenario_to_numerical(), saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
-            myBAF.update_baf(gen.best_recovery_behavior, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
-            if gen.best_recovery_behavior == guess:
+            guess = myBAF.AABL(gen.scenario, gen.best_recovery_behavior)
+            if guess == gen.best_recovery_behavior:
                 TP_my += 1
             all_TPs_my[itr, attempt] = TP_my
-            runtimes['RABL'] += timer()-start
+            runtimes['pseudocode'] += timer()-start
 
 
 
@@ -88,14 +85,14 @@ def main():
             print(f"{attempt}:AABL: {TP}, Adjusted: {TP_my}")
             print("best recovery was", gen.best_recovery_behavior)
             # input("Press any key...")
-            refactored_correct.append(TP_my)
+            pseudocode_correct.append(TP_my)
             AABL_correct.append(TP)
 
 
 
         fig, ax = plt.subplots(nrows=1, ncols=1)
         ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="AABL")
-        ax.plot(range(number_of_attempts), np.mean(all_TPs_my[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), 'b:', label="RABL")
+        ax.plot(range(number_of_attempts), np.mean(all_TPs_my[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), 'b:', label="pseudocode")
         ax.set_xlabel("Number of Attempts")
         ax.set_ylabel("Accuracy")
         ax.legend()
@@ -108,13 +105,13 @@ def main():
 
     data = pd.DataFrame({
         'AABL_correct': AABL_correct,
-        'refactored_correct': refactored_correct,
+        'pseudocode_correct': pseudocode_correct,
     })
     data.to_csv('data/result_' + scenario_type + '.csv', index=False)
 
     csv_filename = './data/runtime.csv'
     if not os.path.isfile(csv_filename):
-        header = ['scenario', 'AABL', 'RABL']
+        header = ['scenario', 'AABL', 'pseudocode']
         with open(csv_filename, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(header)
@@ -132,9 +129,9 @@ def main():
                 writer.writerow(row)
             else:
                 write_new_row = False
-                writer.writerow([scenario_type, runtimes['AABL'], runtimes['RABL']])
+                writer.writerow([scenario_type, runtimes['AABL'], runtimes['pseudocode']])
         if write_new_row:
-            writer.writerow([scenario_type, runtimes['AABL'], runtimes['RABL']])
+            writer.writerow([scenario_type, runtimes['AABL'], runtimes['pseudocode']])
 
     shutil.move(temp_file.name, csv_filename)
 

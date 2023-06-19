@@ -19,7 +19,7 @@ from timeit import default_timer as timer
 
 if __name__ == "__main__":
     number_of_attempts = 500
-    number_of_iterations = 5
+    number_of_iterations = 10
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
