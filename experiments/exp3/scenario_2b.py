@@ -10,6 +10,10 @@ class ScenarioGenerator:
     def __init__(self, scenario_type='first'):
         if scenario_type == 'first':
             self.scenario_length = 6
+        elif scenario_type == 'second':
+            self.scenario_length = 9
+        elif scenario_type == 'third':
+            self.scenario_length = 12
         self.scenario = []
         self.best_recovery_behavior = ""
         self.ruleset = self.generate_ruleset()
