@@ -8,6 +8,7 @@ import sys
 import scenarios_original as scenarios
 import BAF2_original as BAF2
 import BAF2_correlation as myABL
+import BAF2_correlation2 as myABL2
 import tabular
 from sklearn import tree
 import numpy as np
@@ -20,18 +21,20 @@ from timeit import default_timer as timer
 
 def main():
     number_of_attempts = 200
-    number_of_iterations = 100
+    number_of_iterations = 10
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_my = np.zeros((number_of_iterations, number_of_attempts))
+    all_TPs_my2 = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_tabular = np.zeros((number_of_iterations, number_of_attempts))
-    scenario_type = "first" #options are "first" and "second"
+    scenario_type = "third" #options are "first" and "second"
 
     refactored_correct = []
     refactored_incorrect = []
     AABL_correct = []
     AABL_incorrect = []
     My_time = 0
+    My_time2 = 0
     AABL_time = 0
 
 
@@ -42,6 +45,7 @@ def main():
         gen = scenarios.ScenarioGenerator(scenario_type)
         baf = BAF2.BAF2(gen.scenario, gen)
         myBAF = myABL.BAF2(gen.scenario)
+        myBAF2 = myABL2.BAF2(gen.scenario)
         locations = list(range(0, gen.number_of_locations))
         colors = list(gen.colors.values())
         colors.append("Noc")
@@ -59,6 +63,7 @@ def main():
         TP = 0
         TP_Orig = 0
         TP_my = 0
+        TP_my2 = 0
         TP_tabular = 0
         DT_TP = 0
 
@@ -69,14 +74,14 @@ def main():
             gen.generate_scenario()
 
 
-            start = timer()
-            guess = baf.generate_second_guess(gen.scenario, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches, show_rule=True)
-            baf.update_baf(gen.scenario, gen.best_recovery_behavior, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches)
-            if gen.best_recovery_behavior == guess:
-                TP += 1
-            all_TPs[itr, attempt] = TP
-            # print(f"AABL: {timer()-start} s")
-            AABL_time += timer()-start
+            # start = timer()
+            # guess = baf.generate_second_guess(gen.scenario, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches, show_rule=True)
+            # baf.update_baf(gen.scenario, gen.best_recovery_behavior, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory_for_other_approaches)
+            # if gen.best_recovery_behavior == guess:
+            #     TP += 1
+            # all_TPs[itr, attempt] = TP
+            # # print(f"AABL: {timer()-start} s")
+            # AABL_time += timer()-start
 
             # start = timer()
             # guess_orig = baf2.generate_second_guess(gen.scenario, show_rule=True)
@@ -102,6 +107,14 @@ def main():
             all_TPs_my[itr, attempt] = TP_my
             My_time += timer()-start
 
+            start = timer()
+            guess = myBAF2.guess(gen.scenario_to_numerical(), saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
+            myBAF2.update_baf(gen.best_recovery_behavior, saved_scenarios_in_memory_for_other_approaches, saved_best_recovery_behaviors_in_memory)
+            if gen.best_recovery_behavior == guess:
+                TP_my2 += 1
+            all_TPs_my2[itr, attempt] = TP_my2
+            My_time2 += timer()-start
+
 
 
             saved_scenarios_in_memory_for_other_approaches.append(gen.scenario_to_numerical())
@@ -109,7 +122,7 @@ def main():
 
             saved_best_recovery_behaviors_in_memory.append(gen.best_recovery_behavior)
  
-            print(f"{attempt}:AABL: {TP}, Adjusted: {TP_my}")
+            print(f"{attempt}:AABL: {TP}, Adjusted: {TP_my}, extra: {TP_my2}")
             print("best recovery was", gen.best_recovery_behavior)
             # input("Press any key...")
             refactored_correct.append(TP_my)
@@ -121,7 +134,8 @@ def main():
 
         fig, ax = plt.subplots(nrows=1, ncols=1)
         ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="AABL")
-        ax.plot(range(number_of_attempts), np.mean(all_TPs_my[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), ':', label="Refactored")
+        ax.plot(range(number_of_attempts), np.mean(all_TPs_my[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), ':', label="Refactored1")
+        ax.plot(range(number_of_attempts), np.mean(all_TPs_my2[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), '.-', label="Refactored2")
         ax.set_xlabel("Number of Attempts")
         ax.set_ylabel("Accuracy")
         ax.legend()

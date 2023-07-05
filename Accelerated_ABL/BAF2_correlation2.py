@@ -18,20 +18,24 @@ class BAF2:
         # Check each column
         for i, column in enumerate(transposed_scenarios):
             # Create a dictionary to map each scenario to a recovery
-            scenario_to_recovery = {scenario: recovery for scenario, recovery in zip(column, corresponding_recoveries_for_scenarios_so_far)}
+            scenario_to_recovery = {}
             correlating_columns[i] = 0
             # If the mappings in the dictionary recreate the original lists exactly, then the column is a correlating column
             # Thus we count how many rows are the same as the original list
             for scenario, recovery in zip(column, corresponding_recoveries_for_scenarios_so_far):
-                if scenario_to_recovery[scenario] == recovery:
-                    correlating_columns[i] += 1
+                if scenario in scenario_to_recovery:
+                    if scenario_to_recovery[scenario] == recovery:
+                        correlating_columns[i] += 1
+                else:
+                    scenario_to_recovery[scenario] = recovery
+
             # Normalize to percentages
             correlating_columns[i] = correlating_columns[i] / len(column)
         
         if correlating_columns:
-            median_value = statistics.median(correlating_columns.values())        
-            keys_above_median = [key for key, value in correlating_columns.items() if value > median_value]
-            self.important_locations = keys_above_median
+            mode_value = statistics.mode(correlating_columns.values())        
+            keys_above_mode = [key for key, value in correlating_columns.items() if value > mode_value]
+            self.important_locations = keys_above_mode
 
         return
 
