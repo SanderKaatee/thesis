@@ -57,11 +57,11 @@ if __name__ == "__main__":
         print(f"\n\n {itr} / {number_of_iterations - 1} \n\n")
         gen = scenarios.ScenarioGenerator(scenario_type)
         baf = BAF2.BAF2(gen.scenario, gen)
-        baf2 = BAF.BAF(gen.scenario)
+        # baf2 = BAF.BAF(gen.scenario)
         saved_scenarios_in_memory_for_other_approaches = []
         saved_best_recovery_behaviors_in_memory_for_other_approaches = []
         TP = 0
-        TP_Orig = 0
+        # TP_Orig = 0
         DT_TP = 0
         feature_indices = []
         # time.sleep(10)
@@ -76,16 +76,16 @@ if __name__ == "__main__":
             all_TPs[itr, attempt] = TP
             runtimes['AABL'] += timer()-start
 
-            start = timer()
-            guess_orig = baf2.generate_second_guess(gen.scenario, show_rule=True)
-            baf2.update_baf(gen.scenario, gen.best_recovery_behavior)
-            if random.randint(0,100) < 90 or attempt < 3:
-                if gen.best_recovery_behavior == guess_orig:
-                    TP_Orig += 1
-            elif gen.best_recovery_behavior == [value for (key,value) in gen.recovery_behaviors.items()][random.randint(0,3)]:
-                TP_Orig += 1
-            all_TPs_Orig[itr, attempt] = TP_Orig
-            runtimes['ABL'] += timer()-start
+            # start = timer()
+            # # guess_orig = baf2.generate_second_guess(gen.scenario, show_rule=True)
+            # # baf2.update_baf(gen.scenario, gen.best_recovery_behavior)
+            # if random.randint(0,100) < 90 or attempt < 3:
+            #     if gen.best_recovery_behavior == guess_orig:
+            #         TP_Orig += 1
+            # elif gen.best_recovery_behavior == [value for (key,value) in gen.recovery_behaviors.items()][random.randint(0,3)]:
+            #     TP_Orig += 1
+            # all_TPs_Orig[itr, attempt] = TP_Orig
+            # runtimes['ABL'] += timer()-start
 
             #Decision tree with sklearn
             if saved_scenarios_in_memory_for_other_approaches:
@@ -105,10 +105,10 @@ if __name__ == "__main__":
             # if attempt == 0:
             #     time.sleep(10)
             # print(f"time: {timer()-start} s")
-            print(f"{attempt}:Our: {TP}, Original: {TP_Orig}, Decision tree: {DT_TP}")
+            print(f"{attempt}:Our: {TP},")
 
         AABL_correct.append(TP)
-        ABL_correct.append(TP_Orig)
+        # ABL_correct.append(TP_Orig)
         DT_correct.append(DT_TP)
 
 
@@ -119,18 +119,18 @@ if __name__ == "__main__":
         print("average_per_iteration_time: ", np.mean(times))
         # time.sleep(100)
         print(f"Our model true positives: {TP}")
-        print(f"Our original model true positives: {TP_Orig}")
+        # print(f"Our original model true positives: {TP_Orig}")
         print(f"Decision Tree's true positives: {DT_TP}")
         print(f"Overal: {np.mean(all_TPs[:itr+1],axis=0)}")
-        print(f"Original Overal accuracy: {np.mean(all_TPs_Orig[:itr+1],axis=0)/(np.array(range(number_of_attempts)) + 1)}")
-        print(f"Original Overal: {np.mean(all_TPs_Orig[:itr+1],axis=0)}")
+        # print(f"Original Overal accuracy: {np.mean(all_TPs_Orig[:itr+1],axis=0)/(np.array(range(number_of_attempts)) + 1)}")
+        # print(f"Original Overal: {np.mean(all_TPs_Orig[:itr+1],axis=0)}")
         print(f"Overal accuracy: {np.mean(all_TPs[:itr+1],axis=0)/(np.array(range(number_of_attempts)) + 1)}")
         print(f"Overal DT: {np.mean(all_DT_TPs,axis=0)}")
         fig, ax = plt.subplots(nrows=1, ncols=1)
         print(f"Overal DT accuracy: {np.mean(all_DT_TPs[:itr+1],axis=0)/(np.array(range(number_of_attempts)) + 1)}")
-        ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="Accelerated ABL (our)")
-        ax.plot(range(number_of_attempts),
-                np.mean(all_TPs_Orig[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), '--', label="Original ABL")
+        ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="AABL")
+        # ax.plot(range(number_of_attempts),
+                # np.mean(all_TPs_Orig[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), '--', label="Original ABL")
         ax.set_xlabel("Number of Attempts")
         ax.set_ylabel("Accuracy")
         # ax.plot(range(number_of_attempts), np.mean(all_DT_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="Decision Tree")
@@ -143,11 +143,10 @@ if __name__ == "__main__":
     data = pd.DataFrame({
         'iteration': range(1, number_of_iterations + 1),
         'AABL_correct': AABL_correct,
-        'ABL_correct': ABL_correct,
     })
     csv_filename = './data/runtime.csv'
     if not os.path.isfile(csv_filename):
-        header = ['scenario', 'ABL', 'AABL']
+        header = ['scenario', 'AABL']
         with open(csv_filename, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(header)
@@ -165,9 +164,9 @@ if __name__ == "__main__":
                 writer.writerow(row)
             else:
                 write_new_row = False
-                writer.writerow([scenario_type, runtimes['ABL'], runtimes['AABL']])
+                writer.writerow([scenario_type, runtimes['AABL']])
         if write_new_row:
-            writer.writerow([scenario_type, runtimes['ABL'], runtimes['AABL']])
+            writer.writerow([scenario_type, runtimes['AABL']])
 
     shutil.move(temp_file.name, csv_filename)
 
