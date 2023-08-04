@@ -32,7 +32,7 @@ from timeit import default_timer as timer
 
 if __name__ == "__main__":
     number_of_attempts = 200
-    number_of_iterations = 1
+    number_of_iterations = 10
     all_TPs = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_Orig = np.zeros((number_of_iterations, number_of_attempts))
     all_DT_TPs = np.zeros((number_of_iterations, number_of_attempts))
@@ -77,14 +77,14 @@ if __name__ == "__main__":
             runtimes['AABL'] += timer()-start
 
             start = timer()
-            guess_orig = baf2.generate_second_guess(gen.scenario, show_rule=True)
-            baf2.update_baf(gen.scenario, gen.best_recovery_behavior)
-            if random.randint(0,100) < 90 or attempt < 3:
-                if gen.best_recovery_behavior == guess_orig:
-                    TP_Orig += 1
-            elif gen.best_recovery_behavior == [value for (key,value) in gen.recovery_behaviors.items()][random.randint(0,3)]:
-                TP_Orig += 1
-            all_TPs_Orig[itr, attempt] = TP_Orig
+            # guess_orig = baf2.generate_second_guess(gen.scenario, show_rule=True)
+            # baf2.update_baf(gen.scenario, gen.best_recovery_behavior)
+            # if random.randint(0,100) < 90 or attempt < 3:
+            #     if gen.best_recovery_behavior == guess_orig:
+            #         TP_Orig += 1
+            # elif gen.best_recovery_behavior == [value for (key,value) in gen.recovery_behaviors.items()][random.randint(0,3)]:
+            #     TP_Orig += 1
+            # all_TPs_Orig[itr, attempt] = TP_Orig
             runtimes['ABL'] += timer()-start
 
             #Decision tree with sklearn
@@ -128,9 +128,9 @@ if __name__ == "__main__":
         print(f"Overal DT: {np.mean(all_DT_TPs,axis=0)}")
         fig, ax = plt.subplots(nrows=1, ncols=1)
         print(f"Overal DT accuracy: {np.mean(all_DT_TPs[:itr+1],axis=0)/(np.array(range(number_of_attempts)) + 1)}")
-        ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="Accelerated ABL (our)")
-        ax.plot(range(number_of_attempts),
-                np.mean(all_TPs_Orig[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), '--', label="Original ABL")
+        ax.plot(range(number_of_attempts), np.mean(all_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="AABL")
+        # ax.plot(range(number_of_attempts),
+                # np.mean(all_TPs_Orig[:itr + 1], axis=0) / (np.array(range(number_of_attempts)) + 1), '--', label="Original ABL")
         ax.set_xlabel("Number of Attempts")
         ax.set_ylabel("Accuracy")
         # ax.plot(range(number_of_attempts), np.mean(all_DT_TPs[:itr+1], axis=0)/(np.array(range(number_of_attempts)) + 1), 'r-', label="Decision Tree")

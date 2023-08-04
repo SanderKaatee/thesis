@@ -41,10 +41,8 @@ class BAFUnit:
     def extract_feature_values(self, observation):
         feature_values = []
         for i, obs in enumerate(observation):
-                feature_values.append((i, obs[0]))
-                feature_values.append((i, obs[1]))
-        
-        combs = feature_values
+            feature_values.append((i, obs[0]))
+            feature_values.append((i, obs[1]))
         # create all combinations up to length 'length'
         combs = []
         for i in range(1, len(feature_values)+1): 
@@ -57,6 +55,7 @@ class BAFUnit:
         combs = self.extract_feature_values(observation)
         predicted_behaviour = []
         SN = self.support_nodes
+        print(SN)
         for sn in SN:
             for comb in combs: 
                 if sn[0]==comb:
@@ -67,7 +66,7 @@ class BAFUnit:
             else:
                 action = random.choice(predicted_behaviour)
         elif self.previous_best_recoveries:
-            action = random.choice(self.previous_best_recoveries)
+            action = 'Random'
         else:
             action = ''
           

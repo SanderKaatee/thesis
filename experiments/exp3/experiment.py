@@ -26,8 +26,8 @@ from timeit import default_timer as timer
 
 
 def main():
-    number_of_attempts = 1000
-    number_of_iterations = 5
+    number_of_attempts = 200
+    number_of_iterations = 10
     all_TPs_AABL = np.zeros((number_of_iterations,number_of_attempts))
     all_TPs_RABL = np.zeros((number_of_iterations, number_of_attempts))
     all_TPs_pseudo = np.zeros((number_of_iterations, number_of_attempts))
@@ -137,6 +137,8 @@ def main():
     data = pd.DataFrame({
         'AABL_correct': AABL_correct,
         'pseudocode_correct': pseudocode_correct,
+        'RABL_correct':RABL_correct,
+        'Most_Common_correct':mostcommon_correct
     })
     data.to_csv('data/result_' + scenario_type + '.csv', index=False)
 

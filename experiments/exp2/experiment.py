@@ -97,7 +97,7 @@ def main():
         ax.set_ylabel("Accuracy")
         ax.legend()
         if itr == number_of_iterations - 1: #only the final plot will be shown (all the plots has been saved)
-            fig.savefig(f"plots/exp1_fig_{scenario_type}.png", bbox_inches='tight')
+            fig.savefig(f"plots/exp2_fig_{scenario_type}.png", bbox_inches='tight')
         plt.close(fig)
     end_time = time.process_time()
     print(f"Total Process Time = {end_time - start_time}")

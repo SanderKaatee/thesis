@@ -117,8 +117,8 @@ class BAF2:
 
                 if negative <= 0:
                     should_change = False
-                    print("adding column:", numbers, " - weight:", overal)
-                    print("caluclation, positive:", positive, " - negative:", negative)
+                    # print("adding column:", numbers, " - weight:", overal)
+                    # print("calculation, positive:", positive, " - negative:", negative)
                     self.combination_feature_weights[str(numbers)] = overal
                     # self.remove_others(idx)
                     # return should_change
@@ -180,7 +180,7 @@ class BAF2:
         max_indices_list = max_weighted_combinations_key.split('[')[1].split(']')[0].split(',')
         max_indices_list = list(map(int, max_indices_list))
         current_scenarios_columns = list(np.array(self.gen[0].scenario_to_numerical())[max_indices_list])
-        print("columns:", current_scenarios_columns)
+        # print("columns:", current_scenarios_columns)
         recovery_behavior_weights = {}
         for recovery_behavior in self.recovery_behaviors:
             recovery_behavior_weights[recovery_behavior] = 0
@@ -197,8 +197,8 @@ class BAF2:
             max_behaviors = [k for k,v in recovery_behavior_weights.items() if v==max_val]
             if len(max_behaviors) == 1:
                 predicted_recovery = max(recovery_behavior_weights.items(), key=operator.itemgetter(1))[0]
-                if show_rule:
-                    print(f"{[scenario[idx] for idx in max_indices_list]}->{predicted_recovery} -- weight: {recovery_behavior_weights[predicted_recovery]}")
+                # if show_rule:
+                    # print(f"{[scenario[idx] for idx in max_indices_list]}->{predicted_recovery} -- weight: {recovery_behavior_weights[predicted_recovery]}")
                 return predicted_recovery
             else:
                 return self.gen[0].numerical_to_recovery_behavior(self.most_common(previous_best_recoveries))
@@ -216,7 +216,7 @@ class BAF2:
                 recovery_behavior_with_highest_sum = recovery_behavior
         return recovery_behavior_with_highest_sum
 
-    def generate_second_guess(self, scenario, previous_scenarios, previous_best_recoveries, show_rule=True):
+    def generate_second_guess(self, scenario, previous_scenarios, previous_best_recoveries, show_rule=False):
         enumerated_scenarios = self.enumeratea_scenarios(scenario)
         self.recur_subset(enumerated_scenarios)
         return self.compute_sum_of_weights_for_each_recovery_behavior(show_rule, enumerated_scenarios, previous_scenarios,
